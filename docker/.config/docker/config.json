@@ -1,0 +1,8 @@
+{
+    "credsStore": "desktop",
+    "psFormat": "table {{.ID}}\\t{{.Names}}\\t{{.Image}}\\t{{.Status}}",
+    "auths": {
+	"registry.bidzaar.arch:5000": {}
+     }
+}
+
