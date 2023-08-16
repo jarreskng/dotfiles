@@ -1,3 +1,4 @@
 return {
-  require('plugins.editor.autopairs')
+  require('plugins.editor.autopairs'),
+  require('plugins.editor.comment')
 }
