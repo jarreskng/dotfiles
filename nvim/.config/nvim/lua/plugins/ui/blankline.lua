@@ -11,7 +11,7 @@ return {
     show_current_context = true,
     use_treesitter = true,
     use_treesitter_scope = true,
-    filetype_exclude = { '', 'help', 'man' },
+    filetype_exclude = { '', 'help', 'man', 'neo-tree' },
   },
   init = function()
     vim.opt.list = true

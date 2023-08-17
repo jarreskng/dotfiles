@@ -14,6 +14,7 @@ return {
       ['['] = { name = '+prev' },
       ['<leader>w'] = { name = '+windows' },
       ['<leader>b'] = { name = '+buffers'},
+      ['<leader>e'] = { name = '+explorer' },
       ['<leader>f'] = { name = '+file/find' },
     }
   },
