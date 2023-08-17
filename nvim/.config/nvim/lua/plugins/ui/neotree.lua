@@ -77,7 +77,7 @@ return {
       },
     },
     filesystem = {
-      bind_to_cwd = true,
+      bind_to_cwd = false,
       filtered_items = {
 	usr_libuv_file_watcher = true,
 	hide_dotfiles = false,
@@ -95,11 +95,11 @@ return {
       },
       window = {
 	mappings = {
+	  ['.'] = 'set_root'
 	  ['/'] = 'fuzzy_finder',
 	  ['f'] = 'filter_on_submit',
 	  ['F'] = 'clear_filter',
 	  ['<bs>'] = 'navigate_up',
-	  ['<.>'] = 'set_root'
 	},
 	fuzzy_finder_mappings = {
 	  ["<C-n>"] = "move_cursor_down",
