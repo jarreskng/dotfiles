@@ -95,7 +95,7 @@ return {
       },
       window = {
 	mappings = {
-	  ['.'] = 'set_root'
+	  ['.'] = 'set_root',
 	  ['/'] = 'fuzzy_finder',
 	  ['f'] = 'filter_on_submit',
 	  ['F'] = 'clear_filter',
