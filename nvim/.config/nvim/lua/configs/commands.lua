@@ -1,4 +1,4 @@
-local group = vim.api.nvim_create_augroup('User', { clear = true })
+local group = vim.api.nvim_create_augroup('jarres', { clear = true })
 
 -- Change current working directory on startup
 vim.api.nvim_create_autocmd("VimEnter", {
