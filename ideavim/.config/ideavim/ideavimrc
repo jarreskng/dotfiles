@@ -1,0 +1,100 @@
+""" https://github.com/JetBrains/ideavim/wiki/set-commands
+"""
+""" 
+
+""" Map <leader> to <space>
+
+let mapleader = ''
+
+""" Common settings
+
+set sidescrolloff=5
+set scrolloff=5
+set linenumber
+set number
+set showcmd
+set showmode
+set notimeout
+set incsearch
+set hlsearch
+set ignorecase
+set history = 200
+set undolevels = 200
+set clipboard+=ideaput
+set clipboard+=unnamedplus
+
+""" Idea settings
+
+set ideamarks
+set ideawrite=all
+set ideastatusicon=gray
+set idearefactormode=select
+
+""" Which Key
+
+set which-key
+let g:WhichKey_DefaultDelay = 200
+let g:WhichKey_ShowVimActions = 'true'
+let g:WhichKey_ShowTypedSequence = 'true'
+let g:WhichKey_ProcessUnknownMappings = 'false'
+let g:WhichKey_SortOrder='by_key_prefix_first'
+
+""" Mappings
+
+" Clear search highlights with <esc>
+noremap <esc> :noh<cr> 
+
+" Remove annoying cursor movements on <space>
+noremap <space> <nop>
+
+" Use <leader>w to manage windows
+map <leader>ww <Action>(NextSplitter)
+map <leader>wq <Action>(CloseEditor)
+map <leader>wv <Action>(SplitVertically)
+map <leader>ws <Action>(SplitHorizontally)
+map <leader>wo <Action>(UnsplitAll)
+
+let g:WhichKeyDesc_windows        = "<leader>w  +window"
+let g:WhichKeyDesc_windows_switch = "<leader>ww Switch windows"
+let g:WhichKeyDesc_windows_quit   = "<leader>wq Quit a window"
+let g:WhichKeyDesc_windows_oquit  = "<leader>wo Close all other windows"
+let g:WhichKeyDesc_windows_vsplit = "<leader>wv Split window vertically"
+let g:WhichKeyDesc_windows_split  = "<leader>ws Split window horizontally"
+
+" Use <leader>g for goto
+map <leader>ga <Action>(GotoAction)
+map <leader>gf <Action>(GotoFile)
+map <leader>gc <Action>(GotoClass)
+map <leader>gu <Action>(FindUsages)
+map <leader>gd <Action>(GotoDeclaration)       
+
+let g:WhichKeyDesc_goto		  = "<leader>g +go to"
+let g:WhichKeyDesc_goto_action	  = "<leader>ga go to action"
+let g:WhichKeyDesc_goto_file	  = "<leader>gf go to file"
+let g:WhichKeyDesc_goto_class	  = "<leader>gc go to class"
+let g:WhichKeyDesc_goto_usages	  = "<leader>gu go to usages"
+let g:WhichKeyDesc_goto_declare	  = "<leader>gd go to declaration"
+
+" Use <leader>G for git
+map <leader>Gb <Action>(Annotate) 
+map <leader>Gd <Action>(Compare.SameVersion)
+
+let g:WhichKeyDesc_git            = "<leader>G +git"
+let g:WhichKeyDesc_diff		  = "<leader>Gd git diff"
+let g:WhichKeyDesc_git_blame      = "<leader>Ga git blame"
+
+" Use gc[c-b] for comments
+map gcc <Action>(CommentByLineComment)
+map gcb <Action>(CommentByBlockComment)
+
+let g:WhichKeyDesc_comments       = "gc +comments"
+let g:WhichKeyDesc_comments_line  = "gcc Toggle line comment"
+let g:WhichKeyDesc_comments_block = "gcb Toggle block comment"
+
+" Use <C-t> for terminal
+map <C-t> <nop>
+map <C-t>t <Action>(ActivateTerminalToolWindow)
+map <C-t>w <Action>(Terminal.NextSplitter)
+
+let g:WhichKeyDesc_terminal	  = "<C-t> +terminal"
+let g:WhichKeyDesc_terminal_open  = "<C-t>t Open terminal" 
