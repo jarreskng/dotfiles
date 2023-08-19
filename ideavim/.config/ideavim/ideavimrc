@@ -1,12 +1,17 @@
-""" https://github.com/JetBrains/ideavim/wiki/set-commands
-"""
-""" 
+""" Desc: IdeaVim is a Vim engine for JetBrains IDEs
+""" Wiki: https://github.com/JetBrains/ideavim/wiki
+""" Repo: https://plugins.jetbrains.com/plugin/164-ideavim
+""" Deps: https://plugins.jetbrains.com/plugin/15976-which-key
 
-""" Map <leader> to <space>
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""" Set <space> as <leader>
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-let mapleader = ''
+let mapleader = ' '
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """ Common settings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 set sidescrolloff=5
 set scrolloff=5
@@ -14,87 +19,76 @@ set linenumber
 set number
 set showcmd
 set showmode
-set notimeout
 set incsearch
 set hlsearch
 set ignorecase
+set notimeout
 set history = 200
 set undolevels = 200
 set clipboard+=ideaput
 set clipboard+=unnamedplus
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """ Idea settings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 set ideamarks
 set ideawrite=all
 set ideastatusicon=gray
 set idearefactormode=select
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """ Which Key
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 set which-key
-let g:WhichKey_DefaultDelay = 200
+
+let g:WhichKey_SortOrder='by_key_prefix_first'
+let g:WhichKey_DefaultDelay = 500
 let g:WhichKey_ShowVimActions = 'true'
 let g:WhichKey_ShowTypedSequence = 'true'
 let g:WhichKey_ProcessUnknownMappings = 'false'
-let g:WhichKey_SortOrder='by_key_prefix_first'
 
-""" Mappings
+function! MapKeyToAction(key, action, wk_id, wk_text)
+  let l:wk_opts = 'WhichKeyDesc' . '_' . a:wk_id
+  let l:wk_text = '"' . a:key . ' ' . a:wk_text . '"'  
+  exe 'noremap ' . a:key . ' ' . a:action
+  exe 'let g:' . l:wk_opts . ' = ' . l:wk_text 
+endfunction
 
-" Clear search highlights with <esc>
-noremap <esc> :noh<cr> 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""" Mappings 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" Remove annoying cursor movements on <space>
+""" Remove annoying cursor movements on <space>
 noremap <space> <nop>
 
-" Use <leader>w to manage windows
-map <leader>ww <Action>(NextSplitter)
-map <leader>wq <Action>(CloseEditor)
-map <leader>wv <Action>(SplitVertically)
-map <leader>ws <Action>(SplitHorizontally)
-map <leader>wo <Action>(UnsplitAll)
-
-let g:WhichKeyDesc_windows        = "<leader>w  +window"
-let g:WhichKeyDesc_windows_switch = "<leader>ww Switch windows"
-let g:WhichKeyDesc_windows_quit   = "<leader>wq Quit a window"
-let g:WhichKeyDesc_windows_oquit  = "<leader>wo Close all other windows"
-let g:WhichKeyDesc_windows_vsplit = "<leader>wv Split window vertically"
-let g:WhichKeyDesc_windows_split  = "<leader>ws Split window horizontally"
-
-" Use <leader>g for goto
-map <leader>ga <Action>(GotoAction)
-map <leader>gf <Action>(GotoFile)
-map <leader>gc <Action>(GotoClass)
-map <leader>gu <Action>(FindUsages)
-map <leader>gd <Action>(GotoDeclaration)       
-
-let g:WhichKeyDesc_goto		  = "<leader>g +go to"
-let g:WhichKeyDesc_goto_action	  = "<leader>ga go to action"
-let g:WhichKeyDesc_goto_file	  = "<leader>gf go to file"
-let g:WhichKeyDesc_goto_class	  = "<leader>gc go to class"
-let g:WhichKeyDesc_goto_usages	  = "<leader>gu go to usages"
-let g:WhichKeyDesc_goto_declare	  = "<leader>gd go to declaration"
-
-" Use <leader>G for git
-map <leader>Gb <Action>(Annotate) 
-map <leader>Gd <Action>(Compare.SameVersion)
-
+""" Set WhichKey titles for groups of actions
+let g:WhichKeyDesc_windows	  = "<leader>w +window"
 let g:WhichKeyDesc_git            = "<leader>G +git"
-let g:WhichKeyDesc_diff		  = "<leader>Gd git diff"
-let g:WhichKeyDesc_git_blame      = "<leader>Ga git blame"
+let g:WhichKeyDesc_comment	  = "<leader>c +comments"
+let g:WhichKeyDesc_find		  = "<leader>f +find/goto"
 
-" Use gc[c-b] for comments
-map gcc <Action>(CommentByLineComment)
-map gcb <Action>(CommentByBlockComment)
+""" Use <leader>w for windows
+call MapKeyToAction('<leader>ww', '<Action>(NextSplitter)',	      'window_switch',    'Switch windows')
+call MapKeyToAction('<leader>wq', '<Action>(CloseEditor)',	      'window_quit',      'Quit a window')
+call MapKeyToAction('<leader>wo', '<Action>(UnsplitAll)',	      'window_quit_o',    'Close all other windows')
+call MapKeyToAction('<leader>wv', '<Action>(SplitVertically)',	      'window_split_v',   'Split window vertically')
+call MapKeyToAction('<leader>ws', '<Action>(SplitHorizontally)',      'window_split_h',   'Split window horizontally')
 
-let g:WhichKeyDesc_comments       = "gc +comments"
-let g:WhichKeyDesc_comments_line  = "gcc Toggle line comment"
-let g:WhichKeyDesc_comments_block = "gcb Toggle block comment"
+""" Use <leader>f for find or goto
+call MapKeyToAction('<leader>fe', '<Action>(SearchEverywhere)',	      'find_everywhere',  'Search everywhere')
+call MapKeyToAction('<leader>fa', '<Action>(GotoAction)',	      'find_action',      'Find an action')
+call MapKeyToAction('<leader>ff', '<Action>(GotoFile)',		      'find_file',	  'Find a file')
+call MapKeyToAction('<leader>fc', '<Action>(GotoClass)',	      'find_class',	  'Find a class')
+call MapKeyToAction('<leader>fu', '<Action>(FindUsages)',	      'find_usages',      'Find usages')
+call MapKeyToAction('<leader>fd', '<Action>(GotoDeclaration)',	      'find_declaration', 'Find a declaration')
 
-" Use <C-t> for terminal
-map <C-t> <nop>
-map <C-t>t <Action>(ActivateTerminalToolWindow)
-map <C-t>w <Action>(Terminal.NextSplitter)
+""" Use <leader>c for comments
+call MapKeyToAction('<leader>cc', '<Action>(CommentByLineComment)',   'comments_line',	  'Toggle line comment')
+call MapKeyToAction('<leader>cb', '<Action>(CommentByBlockComment)',  'comments_block',	  'Toggle block comment')
 
-let g:WhichKeyDesc_terminal	  = "<C-t> +terminal"
-let g:WhichKeyDesc_terminal_open  = "<C-t>t Open terminal" 
+""" Use <leader>G for git
+call MapKeyToAction('<leader>Gb', '<Action>(Annotate)',		      'git_blame',	  'Git blame')
+call MapKeyToAction('<leader>Gd', '<Action>(Compare.SameVersion)',    'git_diff',	  'Git diff')
+
