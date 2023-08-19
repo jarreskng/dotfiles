@@ -52,7 +52,7 @@ let g:WhichKey_ProcessUnknownMappings = 'false'
 function! MapKeyToAction(key, action, wk_id, wk_text)
   let l:wk_opts = 'WhichKeyDesc' . '_' . a:wk_id
   let l:wk_text = '"' . a:key . ' ' . a:wk_text . '"'  
-  exe 'noremap ' . a:key . ' ' . a:action
+  exe 'map ' . a:key . ' ' . a:action
   exe 'let g:' . l:wk_opts . ' = ' . l:wk_text 
 endfunction
 
@@ -61,7 +61,7 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """ Remove annoying cursor movements on <space>
-noremap <space> <nop>
+" noremap <space> <nop>
 
 """ Set WhichKey titles for groups of actions
 let g:WhichKeyDesc_windows	  = "<leader>w +window"
