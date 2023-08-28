@@ -65,72 +65,79 @@ noremap <space> <nop>
 
 
 """ Set whichkey titles for groups
-let g:WhichKeyDesc_projects	  = "<leader>p +projects"
-let g:WhichKeyDesc_windows	  = "<leader>w +window"
-let g:WhichKeyDesc_find		  = "<leader>f +find"
-let g:WhichKeyDesc_goto		  = "<leader>g +goto"
+let g:WhichKeyDesc_projects       = "<leader>p +projects"
+let g:WhichKeyDesc_errors         = "<leader>e +errors"
+let g:WhichKeyDesc_code           = "<leader>c +code"
+let g:WhichKeyDesc_find           = "<leader>f +find"
+let g:WhichKeyDesc_goto           = "<leader>g +goto"
 let g:WhichKeyDesc_git            = "<leader>G +git"
-let g:WhichKeyDesc_comment	  = "<leader>c +comments"
-let g:WhichKeyDesc_refactor	  = "<leader>c +refactor"
+let g:WhichKeyDesc_comment        = "<leader>c +comments"
+let g:WhichKeyDesc_refactor       = "<leader>c +refactor"
+
+
+""" Use <A-q> for tabs
+call MapKeyToAction('<A-l>',      '<Action>(NextTab)',                  'tabs_next',        'Next tab')
+call MapKeyToAction('<A-h>',      '<Action>(PreviousTab)',              'tabs_prev',        'Previous tab')
+call MapKeyToAction('<A-q>',      '<Action>(CloseEditor)',              'tabs_quit',        'Close tab')
+call MapKeyToAction('<A-o>',      '<Action>(CloseAllEditorsButActive)', 'tabs_only',        'Close all other tabs')
 
 
 """ Use <leader>p for projects
-call MapKeyToAction('<leader>pr', '<Action>(ManageRecentProjects)',   'projects_recent',  'Open recent projects')
-call MapKeyToAction('<leader>po', '<Action>(OpenFile)',		      'projects_open',	  'Open project')
-call MapKeyToAction('<leader>pq', '<Action>(CloseProject)',	      'projects_close',	  'Close project')
-call MapKeyToAction('<leader>pw', '<Action>(NextProjectWindow)',      'projects_switch',  'Switch projects')
-
-
-""" Use <leader>w for windows
-call MapKeyToAction('<leader>ww', '<Action>(NextSplitter)',	      'window_switch',    'Switch windows')
-call MapKeyToAction('<leader>wq', '<Action>(CloseEditor)',	      'window_quit',      'Quit a window')
-call MapKeyToAction('<leader>wo', '<Action>(UnsplitAll)',	      'window_quit_o',    'Close all other windows')
-call MapKeyToAction('<leader>wv', '<Action>(SplitVertically)',	      'window_split_v',   'Split window vertically')
-call MapKeyToAction('<leader>ws', '<Action>(SplitHorizontally)',      'window_split_h',   'Split window horizontally')
+call MapKeyToAction('<leader>pr', '<Action>(ManageRecentProjects)',     'projects_recent',  'Open recent projects')
+call MapKeyToAction('<leader>po', '<Action>(OpenFile)',                 'projects_open',    'Open project')
+call MapKeyToAction('<leader>pq', '<Action>(CloseProject)',             'projects_close',   'Close project')
+call MapKeyToAction('<leader>pw', '<Action>(NextProjectWindow)',        'projects_switch',  'Switch projects')
 
 
 """ Use <leader>f for find
-call MapKeyToAction('<leader>fe', '<Action>(SearchEverywhere)',	      'find_everywhere',  'Search everywhere')
-call MapKeyToAction('<leader>fa', '<Action>(GotoAction)',	      'find_action',      'Find an action')
-call MapKeyToAction('<leader>ff', '<Action>(GotoFile)',		      'find_file',	  'Find a file')
-call MapKeyToAction('<leader>fc', '<Action>(GotoClass)',	      'find_class',	  'Find a class')
-call MapKeyToAction('<leader>fu', '<Action>(FindUsages)',	      'find_usages',      'Find usages')
-call MapKeyToAction('<leader>fd', '<Action>(GotoDeclaration)',	      'find_declaration', 'Find a declaration')
-call MapKeyToAction('<leader>fi', '<Action>(SelectIn)',		      'find_in',          'Find in...')
+call MapKeyToAction('<leader>fe', '<Action>(SearchEverywhere)',         'find_everywhere',  'Search everywhere')
+call MapKeyToAction('<leader>fi', '<Action>(SelectIn)',                 'find_in',          'Find in...')
+call MapKeyToAction('<leader>fa', '<Action>(GotoAction)',               'find_action',      'Find an action')
+call MapKeyToAction('<leader>ff', '<Action>(GotoFile)',                 'find_file',        'Find a file')
+call MapKeyToAction('<leader>fc', '<Action>(GotoClass)',                'find_class',       'Find a class')
+
+
+""" Use <leader>c for code
+call MapKeyToAction('<leader>ci', '<Action>(GoToImplementation)',       'code_implement',   'Go to implementation')
+call MapKeyToAction('<leader>cd', '<Action>(GotoTypeDeclaration)',      'code_declaration', 'Go to declaration')
+call MapKeyToAction('<leader>cs', '<Action>(GotoSuperMethod)',          'code_super',       'Go to super method')
+call MapKeyToAction('<leader>cr', '<Action>(FindUsages)',               'code_references',  'Go to references')
+call MapKeyToAction('<leader>ch', '<Action>(HighlightUsagesInFile),     'code_highlight',   'Highlight usages in file')
 
 
 """ Use <leader>c for comments
-call MapKeyToAction('<leader>cc', '<Action>(CommentByLineComment)',   'comments_line',	  'Toggle line comment')
-call MapKeyToAction('<leader>cb', '<Action>(CommentByBlockComment)',  'comments_block',	  'Toggle block comment')
-
+call MapKeyToAction('<leader>cc', '<Action>(CommentByLineComment)',     'comments_line',    'Toggle line comment')
+call MapKeyToAction('<leader>cb', '<Action>(CommentByBlockComment)',    'comments_block',   'Toggle block comment')
 
 """ Use <leader>G for git
-call MapKeyToAction('<leader>Gb', '<Action>(Annotate)',		      'git_blame',	  'Git blame')
-call MapKeyToAction('<leader>Gd', '<Action>(Compare.SameVersion)',    'git_diff',	  'Git diff')
+call MapKeyToAction('<leader>Gb', '<Action>(Annotate)',                 'git_blame',        'Git blame')
+call MapKeyToAction('<leader>Gd', '<Action>(Compare.SameVersion)',      'git_diff',         'Git diff')
+call MapKeyToAction('<leader>Gl', '<Action>(NextDiff)',                 'git_diff_next',    'Git next diff')
+call MapKeyToAction('<leader>Gh', '<Action>(PreviousDiff)',             'git_diff_prev',    'Git previous diff')
+
+
+" Use <leader>e for errors
+call MapKeyToAction('<leader>el', '<Action>(GotoNextError)',            'errors_next',      'Next error')
+call MapKeyToAction('<leader>eh', '<Action>(GotoPreviousError)',        'errors_prev',      'Previous error')
 
 
 """ Use <leader>r for refactoring
-call MapKeyToAction('<leader>ri', '<Action>(OptimizeImports)',	      'refactor_imports', 'Optimize imports')
-call MapKeyToAction('<leader>rr', '<Action>(RenameElement)',	      'refactor_rename',  'Rename')
-call MapKeyToAction('<leader>rm', '<Action>(Move)',		      'refactor_mode',	  'Move')
-call MapKeyToAction('<leader>rf', '<Action>(ReformatCode)',	      'refactor_format',  'Reformat code')
+call MapKeyToAction('<leader>ri', '<Action>(OptimizeImports)',          'refactor_imports', 'Optimize imports')
+call MapKeyToAction('<leader>rr', '<Action>(RenameElement)',            'refactor_rename',  'Rename')
+call MapKeyToAction('<leader>rm', '<Action>(Move)',                     'refactor_mode',    'Move')
+call MapKeyToAction('<leader>rf', '<Action>(ReformatCode)',             'refactor_format',  'Reformat code')
 
 
 """ Use g for goto
-call MapKeyToAction('gl',	  '<Action>(Forward)',		      'goto_forward',	  'Go forward')
-call MapKeyToAction('gh',	  '<Action>(Back)',		      'goto_back',	  'Go back')
-call MapKeyToAction('gk',	  '<Action>(MethodUp)',		      'goto_forward',	  'Method up')
-call MapKeyToAction('gj',	  '<Action>(MethodDown)',	      'goto_forward',	  'Method down')
-
-
-""" Use <shift>+q,h,l for tabs
-call MapKeyToAction('H',          '<Action>(NextTab)',		      'tab_next',	  'Next tab')
-call MapKeyToAction('L',	  '<Action>(PreviousTab)',	      'tab_prev',	  'Previous tab')
+call MapKeyToAction('gl',         '<Action>(Forward)',                  'goto_forward',     'Go forward')
+call MapKeyToAction('gh',         '<Action>(Back)',                     'goto_back',        'Go back')
+call MapKeyToAction('gk',         '<Action>(MethodUp)',                 'goto_forward',     'Method up')
+call MapKeyToAction('gj',         '<Action>(MethodDown)',               'goto_forward',     'Method down')
 
 
 """ Use <ctrl>+n,r for selection
-call MapKeyToAction('<C-n>',	  '<Action>(EditorSelectWord)',	       'select_extend',	  'Extend selection')
-call MapKeyToAction('<C-r>',	  '<Action>(EditorUnSelectWord)',      'select_shrink',	  'Shrink selection')
+call MapKeyToAction('<C-n>',      '<Action>(EditorSelectWord)',         'select_extend',   'Extend selection')
+call MapKeyToAction('<C-r>',      '<Action>(EditorUnSelectWord)',       'select_shrink',   'Shrink selection')
 
 
 """ TODO: OPEN TERMINAL WINDOW
