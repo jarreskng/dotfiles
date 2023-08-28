@@ -48,7 +48,7 @@ vim.opt.cursorlineopt = 'number,line'
 
 -- https://neovim.io/doc/user/options.html#'expandtab'
 -- Use the appropriate number of spaces to insert a <Tab>.
-vim.opt.expandtab = false
+vim.opt.expandtab = true
 
 -- https://neovim.io/doc/user/options.html#'history'
 -- How many entries may be stored in the history of commands.
