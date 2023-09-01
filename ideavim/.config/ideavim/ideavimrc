@@ -74,6 +74,11 @@ let g:WhichKeyDesc_git            = "<leader>G +git"
 let g:WhichKeyDesc_comment        = "<leader>c +comments"
 let g:WhichKeyDesc_refactor       = "<leader>c +refactor"
 
+""" Temporary mappings
+inoremap <c-h> <left>
+inoremap <c-j> <down>
+inoremap <c-k> <up>
+inoremap <c-l> <right>
 
 """ Use <A-q> for tabs
 call MapKeyToAction('<A-l>',      '<Action>(NextTab)',                  'tabs_next',        'Next tab')
