@@ -102,7 +102,7 @@ call MapKeyToAction('<leader>ci', '<Action>(GoToImplementation)',       'code_im
 call MapKeyToAction('<leader>cd', '<Action>(GotoTypeDeclaration)',      'code_declaration', 'Go to declaration')
 call MapKeyToAction('<leader>cs', '<Action>(GotoSuperMethod)',          'code_super',       'Go to super method')
 call MapKeyToAction('<leader>cr', '<Action>(FindUsages)',               'code_references',  'Go to references')
-call MapKeyToAction('<leader>ch', '<Action>(HighlightUsagesInFile),     'code_highlight',   'Highlight usages in file')
+call MapKeyToAction('<leader>ch', '<Action>(HighlightUsagesInFile)',    'code_highlight',   'Highlight usages in file')
 
 
 """ Use <leader>c for comments
