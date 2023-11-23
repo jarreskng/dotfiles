@@ -34,4 +34,11 @@ yabai -m config window_animation_duration 0.0
 yabai -m config window_animation_frame_rate 120
 yabai -m config insert_feedback_color 0xffd75f5f
 
+yabai -m rule --add label="Activity Monitor" app="^Activity Monitor$" manage=off
+yabai -m rule --add label="Software Update" title="Software Update" manage=off
+yabai -m rule --add label="App Store" app="^App Store$" manage=off
+yabai -m rule --add label="IINA" app="^IINA$" manage=off
+yabai -m rule --add label="Calculator" app="^Calculator$" manage=off
+yabai -m rule --add label="System Information" app="System Information" title=".*" manage=off
+
 echo "yabai configuration loaded.."
