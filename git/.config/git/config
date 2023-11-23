@@ -20,3 +20,5 @@
     insteadOf = http://gitlab.com/
     insteadOf = https://gitlab.com/
 
+[core]
+	autocrlf = input
