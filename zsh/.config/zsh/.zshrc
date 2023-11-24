@@ -72,8 +72,15 @@ alias emacs="emacs -nw"
 alias em="emacs -nw"
 alias nv="nvim"
 
+alias gs="git status"
+alias ga="git add"
+alias gp="git push"
+alias gb="git branch"
+alias gc="git commit"
+alias gd="git diff"
+alias gl="git log --pretty=oneline --abbrev-commit"
+
 alias rm="nocorrect rm -v -i"
 alias cp="nocorrect cp -v -p"
 alias mv="nocorrect mv -v -i"
 alias ls="gls -lhF --group-directories-first --color=auto"
-
