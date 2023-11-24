@@ -11,8 +11,8 @@ export XDG_CACHE_HOME="${HOME}/Library/Caches"
 #                               default applications
 #-----------------------------------------------------------------------
 
-export EDITOR = "nvim"
-export VISUAL = "nvim"
+export EDITOR="nvim"
+export VISUAL="nvim"
 
 #-----------------------------------------------------------------------
 #                               zsh workaround
