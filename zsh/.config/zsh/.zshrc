@@ -30,8 +30,7 @@ setopt HIST_REDUCE_BLANKS
 #                         completion
 #-----------------------------------------------------------------------
 
-autoload -U compinit
-compinit -d "${ZSH_COMP_DUMP}"
+autoload -U compinit; compinit -d "${ZSH_COMP_DUMP}"
 
 zstyle ':completion:*' cache-path ${ZSH_COMP_CACHE}
 zstyle ':completion:*'              matcher-list 'm:{a-zA-Z}={A-Za-z}'
@@ -49,8 +48,7 @@ zstyle ':completion:*:processes'    insert-ids menu select
 #                         prompt
 #-----------------------------------------------------------------------
 
-autoload -U promptinit
-promptinit
+autoload -U promptinit; promptinit
 prompt redhat
 
 #-----------------------------------------------------------------------
@@ -83,4 +81,4 @@ alias gl="git log --pretty=oneline --abbrev-commit"
 alias rm="nocorrect rm -v -i"
 alias cp="nocorrect cp -v -p"
 alias mv="nocorrect mv -v -i"
-alias ls="gls -lhF --group-directories-first --color=auto"
+alias ls="gls -alhF --group-directories-first --color=auto"
