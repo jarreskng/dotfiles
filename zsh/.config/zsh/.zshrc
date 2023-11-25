@@ -1,4 +1,10 @@
 #-----------------------------------------------------------------------
+#                         plugins (path)
+#-----------------------------------------------------------------------
+
+fpath=(${ZDOTDIR}/plugins $fpath)
+
+#-----------------------------------------------------------------------
 #                         navigation
 #-----------------------------------------------------------------------
 
@@ -48,8 +54,10 @@ zstyle ':completion:*:processes'    insert-ids menu select
 #                         prompt
 #-----------------------------------------------------------------------
 
-autoload -U promptinit; promptinit
-prompt redhat
+# autoload -U promptinit; promptinit
+# prompt redhat
+
+autoload -Uz jrs-prompt; jrs-prompt
 
 #-----------------------------------------------------------------------
 #                         bindings
@@ -82,3 +90,4 @@ alias rm="nocorrect rm -v -i"
 alias cp="nocorrect cp -v -p"
 alias mv="nocorrect mv -v -i"
 alias ls="gls -alhF --group-directories-first --color=auto"
+
