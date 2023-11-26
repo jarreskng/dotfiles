@@ -54,10 +54,8 @@ zstyle ':completion:*:processes'    insert-ids menu select
 #                         prompt
 #-----------------------------------------------------------------------
 
-# autoload -U promptinit; promptinit
-# prompt redhat
-
-autoload -Uz jrs-prompt; jrs-prompt
+autoload -U promptinit; promptinit
+prompt redhat
 
 #-----------------------------------------------------------------------
 #                         bindings
@@ -69,6 +67,13 @@ case $TERM in
     xterm-termite)
     ;;
 esac
+
+#-----------------------------------------------------------------------
+#                         vi-mode
+#-----------------------------------------------------------------------
+
+export KEYTIMEOUT=1
+bindkey -v
 
 #-----------------------------------------------------------------------
 #                         aliases

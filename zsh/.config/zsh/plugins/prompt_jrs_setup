@@ -1,0 +1,128 @@
+# vim:ft=bash ts=2 sw=2 sts=2
+
+# https://zsh.sourceforge.io/Doc/Release/Prompt-Expansion.html
+# https://github.com/agnoster/agnoster-zsh-theme/blob/master/agnoster.zsh-theme
+# https://github.com/softmoth/zsh-vim-mode/blob/main/zsh-vim-mode.plugin.zsh
+# https://github.com/Phantas0s/purification/blob/master/prompt_purification_setup
+
+PROMPT_JRS_VIM_MODE_ENABLE=true
+PROMPT_JRS_VIM_MODE_KEYMAP=viins
+
+PROMPT_JRS_COLORS_RESET="%f%k"
+PROMPT_JRS_COLORS_LAST_BG=""
+PROMPT_JRS_COLORS_LAST_FG=""
+
+PROMPT_JRS_SYMBOL_LSEP="\ue0b0"
+PROMPT_JRS_SYMBOL_RSEP="\ue0b2"
+PROMPT_JRS_SYMBOL_LSEP_ALT="\ue0b1"
+PROMPT_JRS_SYMBOL_RSEP_ALT="\ue0b3"
+
+prompt_jrs_set_vim_keymap () {
+  local keymap="$1"
+  local region=${REGION_ACTIVE:-0}
+
+  if [[ $keymap = main || $keymap = '' ]]; then
+    keymap=viins
+  fi
+
+  if [[ $keymap = vicmd && $region = 1 ]]; then
+    keymap=vichar
+  fi
+
+  if [[ $keymap = vicmd && $region = 2 ]]; then
+    keymap=viline
+  fi
+
+  PROMPT_JRS_VIM_MODE_KEYMAP=$keymap
+}
+
+# text; bg; fg; separator_symbol, separator_fg
+# prompt_jrs_segment() {
+#   local txt txt_bg txt_fg
+#   local sep sep_bg sep_fg
+#
+#   [[ -n $1 ]] && txt=" $1 " || ""
+#   [[ -n $4 ]] && sep=$4 || ""
+#
+#   [[ -n $2 ]] && txt_bg="%K{$2}" || txt_bg="%k"
+#   [[ -n $3 ]] && txt_fg="%F{$3}" || txt_fg="%f"
+#
+#   if [[ $sep == $SYMBOLS_LSEP || $sep == $SYMBOLS_LSEP_ALT ]]; then
+#     sep_bg=$txt_bg
+#     sep_fg="%F{$COLORS_PREV_BG}"
+#   fi
+#
+#   if [[ $sep == $SYMBOLS_RSEP || $sep == $SYMBOLS_RSEP_ALT ]]; then
+#     sep_bg="%K{$COLORS_PREV_BG}"
+#     sep_fg="%F{$2}"
+#   fi
+#
+#   if [[ $COLORS_PREV_BG != 'NONE' ]]; then
+#     print -n "%{$sep_bg%}%{$sep_fg%}$sep%k%f"
+#   fi
+#
+#   COLORS_PREV_BG=$2
+#   COLORS_PREV_FG=$3
+#
+#   print -n "%{$txt_bg%}%{$txt_fg%}$txt%k%f"
+# }
+
+prompt_jrs_dir_segment() {
+  print -n "%1~"
+}
+
+prompt_jrs_git_segment() {
+
+}
+
+prompt_jrs_ctx_segment() {
+
+}
+
+prompt_jrs_lside() {
+  prompt_jrs_ctx_segment
+  prompt_jrs_dir_segment
+}
+
+prompt_jrs_rside() {
+  prompt_jrs_git_segment
+}
+
+prompt_jrs_update() {
+  PROMPT=" $(prompt_jrs_lside) >"
+  RPROMPT=" $(prompt_jrs_rside) "
+}
+
+prompt_jrs_redraw() {
+  prompt_jrs_set_vim_keymap "$KEYMAP"
+  prompt_jrs_update redraw
+  $PROMPT_JRS_VIM_MODE_ENABLE && zle && zle reset-prompt
+}
+
+prompt_jrs_precmd() {
+  prompt_jrs_set_vim_keymap viins
+  prompt_jrs_update precmd
+}
+
+prompt_jrs_help() {
+
+}
+
+prompt_jrs_preview() {
+  prompt_preview_theme jrs
+}
+
+prompt_jrs_setup() {
+  autoload -Uz colors && colors
+  autoload -Uz add-zsh-hook
+  autoload -Uz add-zle-hook-widget
+
+  setopt prompt_subst
+  setopt prompt_cr
+  setopt prompt_percent
+
+  add-zsh-hook precmd prompt_jrs_precmd
+  add-zle-hook-widget line-pre-redraw prompt_jrs_redraw
+}
+
+prompt_jrs_setup "$@"
