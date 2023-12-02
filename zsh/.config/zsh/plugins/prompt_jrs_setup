@@ -5,11 +5,11 @@
 # https://github.com/softmoth/zsh-vim-mode/blob/main/zsh-vim-mode.plugin.zsh
 # https://github.com/Phantas0s/purification/blob/master/prompt_purification_setup
 
-PROMPT_JRS_LSEGMENTS=(vimode ctx dir)
+PROMPT_JRS_LSEGMENTS=(vim ctx dir)
 PROMPT_JRS_RSEGMENTS=(git)
 
-PROMPT_JRS_VIM_MODE_KEYMAP=viins
 PROMPT_JRS_VIM_MODE_ENABLE=true
+PROMPT_JRS_VIM_MODE_KEYMAP=viins
 
 PROMPT_JRS_SYMBOL_LSEP="\ue0b0"
 PROMPT_JRS_SYMBOL_RSEP="\ue0b2"
@@ -17,8 +17,8 @@ PROMPT_JRS_SYMBOL_LSEP_ALT="\ue0b1"
 PROMPT_JRS_SYMBOL_RSEP_ALT="\ue0b3"
 
 prompt_jrs_vim_keymap () {
-  local keymap="$1"
   local region=${REGION_ACTIVE:-0}
+  local keymap="$1"
 
   if [[ $keymap = main || $keymap = '' ]]; then
     keymap=viins
@@ -36,29 +36,59 @@ prompt_jrs_vim_keymap () {
 }
 
 prompt_jrs_segments_dir() {
-  print -n "%1~"
-}
-
-prompt_jrs_segments_git() {
-
+  local content="%1~"
+  prompt_jrs_segment "$content"
 }
 
 prompt_jrs_segments_ctx() {
 
 }
 
-prompt_jrs_segment() {
+prompt_jrs_segments_git() {
+  local git_branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
+  [[ -z $git_branch  ]] && return;
 
+  local content="$git_branch"
+  prompt_jrs_segment "$content"
+}
+
+prompt_jrs_segments_vim() {
+  local keymap="${PROMPT_JRS_VIM_MODE_KEYMAP}"
+  local content
+
+  case $keymap in
+    "viins")
+      content="insert";;
+    "vicmd")
+      content="normal";;
+    "viline")
+      content="v-line";;
+    "vichar")
+      content="visual";;
+  esac
+
+  prompt_jrs_segment "$content"
+}
+
+prompt_jrs_segment() {
+  print -n "[$@] "
 }
 
 prompt_jrs_section() {
+  local segment_prefix="prompt_jrs_segments"
+  local segment_function
 
+  for segment_name in "${@}"; do
+    segment_function="${segment_prefix}_${segment_name}"
+    if typeset -f $segment_function > /dev/null; then
+      $segment_function
+    fi
+  done
 }
 
 prompt_jrs_update() {
-  PROMPT="%1~ > "
-  # PROMPT=" $(prompt_jrs_lside) >"
-  # RPROMPT=" $(prompt_jrs_rside) "
+  PROMPT=$(prompt_jrs_section $PROMPT_JRS_LSEGMENTS)
+  RPROMPT=$(prompt_jrs_section $PROMPT_JRS_RSEGMENTS)
 }
 
 prompt_jrs_hooks_redraw() {
@@ -68,7 +98,7 @@ prompt_jrs_hooks_redraw() {
 }
 
 prompt_jrs_hooks_precmd() {
-  prompt_jrs_vim_keymap viins
+  prompt_jrs_vim_keymap $PROMPT_JRS_VIM_MODE_KEYMAP
   prompt_jrs_update precmd
 }
 
