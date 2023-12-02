@@ -36,8 +36,7 @@ prompt_jrs_vim_keymap () {
 }
 
 prompt_jrs_segments_dir() {
-  local content="%1~"
-  prompt_jrs_segment "$content"
+  prompt_jrs_segment "%1~"
 }
 
 prompt_jrs_segments_ctx() {
@@ -45,11 +44,7 @@ prompt_jrs_segments_ctx() {
 }
 
 prompt_jrs_segments_git() {
-  local git_branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
-  [[ -z $git_branch  ]] && return;
 
-  local content="$git_branch"
-  prompt_jrs_segment "$content"
 }
 
 prompt_jrs_segments_vim() {
