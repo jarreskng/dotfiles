@@ -56,7 +56,6 @@ zstyle ':completion:*:processes'    insert-ids menu select
 
 autoload -U promptinit; promptinit
 prompt jrs
-# prompt redhat
 
 #-----------------------------------------------------------------------
 #                         bindings
