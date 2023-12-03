@@ -5,8 +5,8 @@
 # https://github.com/softmoth/zsh-vim-mode/blob/main/zsh-vim-mode.plugin.zsh
 # https://github.com/Phantas0s/purification/blob/master/prompt_purification_setup
 
-PROMPT_JRS_SECTION_LPARTS=(vim ctx dir)
-PROMPT_JRS_SECTION_RPARTS=(git)
+PROMPT_JRS_SECTION_LPARTS=(ctx dir git)
+PROMPT_JRS_SECTION_RPARTS=(vim)
 
 PROMPT_JRS_SECTION_LTYPE="L"
 PROMPT_JRS_SECTION_RTYPE="R"
