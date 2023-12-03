@@ -64,7 +64,15 @@ prompt_jrs_segments_ctx() {
 }
 
 prompt_jrs_segments_git() {
-  prompt_jrs_segment "---"
+  local git_folder="$(git rev-parse --git-dir 2> /dev/null)"
+  [[ -z $git_folder ]] && exit 0 # exit if not a git repo
+
+  local git_branch="$(git symbolic-ref --short HEAD 2>/dev/null)"
+  local git_commit="$(git rev-parse --short HEAD 2>/dev/null)"
+  local git_status="$(git status --porcelain --branch 2>/dev/null)"
+  local git_head=${git_branch:-$git_commit}
+
+  prompt_jrs_segment "$git_head"
 }
 
 prompt_jrs_segment() {
