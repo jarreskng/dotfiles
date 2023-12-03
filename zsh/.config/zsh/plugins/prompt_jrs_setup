@@ -10,8 +10,14 @@ PROMPT_JRS_SECTION_RPARTS=(vim)
 
 PROMPT_JRS_SECTION_LTYPE="L"
 PROMPT_JRS_SECTION_RTYPE="R"
-
 PROMPT_JRS_VIM_KEYMAP=viins
+
+PROMPT_JRS_COLORS_GIT_BG=153
+PROMPT_JRS_COLORS_GIT_FG=4
+PROMPT_JRS_COLORS_VIM_BG=4
+PROMPT_JRS_COLORS_VIM_FG=231
+PROMPT_JRS_COLORS_DIR_BG=4
+PROMPT_JRS_COLORS_DIR_FG=231
 
 PROMPT_JRS_SYMBOL_LSEP="\ue0b0"
 PROMPT_JRS_SYMBOL_RSEP="\ue0b2"
@@ -38,10 +44,11 @@ prompt_jrs_vim_keymap () {
 }
 
 prompt_jrs_segments_vim() {
-  local keymap="${PROMPT_JRS_VIM_KEYMAP}"
-  local content
+  local content="${PROMPT_JRS_VIM_KEYMAP}"
+  local bg=$PROMPT_JRS_COLORS_VIM_BG
+  local fg=$PROMPT_JRS_COLORS_VIM_FG
 
-  case $keymap in
+  case $content in
     "viins")
       content="insert";;
     "vicmd")
@@ -52,11 +59,14 @@ prompt_jrs_segments_vim() {
       content="visual";;
   esac
 
-  prompt_jrs_segment "$content"
+  prompt_jrs_segment $content $bg $fg
 }
 
 prompt_jrs_segments_dir() {
-  prompt_jrs_segment "%1~"
+  local bg=$PROMPT_JRS_COLORS_DIR_BG
+  local fg=$PROMPT_JRS_COLORS_DIR_FG
+  local content="%1~"
+  prompt_jrs_segment $content $bg $fg
 }
 
 prompt_jrs_segments_ctx() {
@@ -64,6 +74,9 @@ prompt_jrs_segments_ctx() {
 }
 
 prompt_jrs_segments_git() {
+  local bg=$PROMPT_JRS_COLORS_GIT_BG
+  local fg=$PROMPT_JRS_COLORS_GIT_FG
+
   local git_folder="$(git rev-parse --git-dir 2> /dev/null)"
   [[ -z $git_folder ]] && exit 0 # exit if not a git repo
 
@@ -72,11 +85,14 @@ prompt_jrs_segments_git() {
   local git_status="$(git status --porcelain --branch 2>/dev/null)"
   local git_head=${git_branch:-$git_commit}
 
-  prompt_jrs_segment "$git_head"
+  prompt_jrs_segment "$git_head" $bg $fg
 }
 
 prompt_jrs_segment() {
-  print -n "[$@]"
+  local content=$1
+  local bg=$2
+  local fg=$3
+  print -n "%K{$bg}%F{$fg} $content %f%k"
 }
 
 prompt_jrs_section() {
@@ -122,7 +138,7 @@ prompt_jrs_setup() {
   autoload -Uz add-zsh-hook
   autoload -Uz add-zle-hook-widget
 
-  setopt prompt_subst
+  setopt no_prompt_subst
   setopt prompt_cr
   setopt prompt_percent
 
