@@ -55,7 +55,8 @@ zstyle ':completion:*:processes'    insert-ids menu select
 #-----------------------------------------------------------------------
 
 autoload -U promptinit; promptinit
-prompt redhat
+prompt jrs
+# prompt redhat
 
 #-----------------------------------------------------------------------
 #                         bindings
@@ -73,7 +74,9 @@ esac
 #-----------------------------------------------------------------------
 
 export KEYTIMEOUT=1
+
 bindkey -v
+bindkey -v '^?' backward-delete-char
 
 #-----------------------------------------------------------------------
 #                         aliases

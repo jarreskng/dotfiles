@@ -11,8 +11,7 @@ PROMPT_JRS_SECTION_RPARTS=(git)
 PROMPT_JRS_SECTION_LTYPE="L"
 PROMPT_JRS_SECTION_RTYPE="R"
 
-PROMPT_JRS_VIM_MODE_ENABLE=true
-PROMPT_JRS_VIM_MODE_KEYMAP=viins
+PROMPT_JRS_VIM_KEYMAP=viins
 
 PROMPT_JRS_SYMBOL_LSEP="\ue0b0"
 PROMPT_JRS_SYMBOL_RSEP="\ue0b2"
@@ -35,11 +34,11 @@ prompt_jrs_vim_keymap () {
     keymap=viline
   fi
 
-  PROMPT_JRS_VIM_MODE_KEYMAP=$keymap
+  PROMPT_JRS_VIM_KEYMAP=$keymap
 }
 
 prompt_jrs_segments_vim() {
-  local keymap="${PROMPT_JRS_VIM_MODE_KEYMAP}"
+  local keymap="${PROMPT_JRS_VIM_KEYMAP}"
   local content
 
   case $keymap in
@@ -101,13 +100,14 @@ prompt_jrs_update() {
 prompt_jrs_hooks_redraw() {
   prompt_jrs_vim_keymap "$KEYMAP"
   prompt_jrs_update redraw
-  $PROMPT_JRS_VIM_MODE_ENABLE && zle && zle reset-prompt
+  zle && zle reset-prompt
 }
 
 prompt_jrs_hooks_precmd() {
-  prompt_jrs_vim_keymap $PROMPT_JRS_VIM_MODE_KEYMAP
+  prompt_jrs_vim_keymap $PROMPT_JRS_VIM_KEYMAP
   prompt_jrs_update precmd
 }
+
 prompt_jrs_setup() {
   autoload -Uz colors && colors
   autoload -Uz vcs_info
