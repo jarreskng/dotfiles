@@ -125,7 +125,7 @@ prompt_jrs_update() {
   local rtype=$PJRS_SECTION_RTYPE
 
   PROMPT="$(prompt_jrs_section $ltype $lparts) "
-  RPROMPT="$(prompt_jrs_section $rtype $rparts)_$1"
+  RPROMPT="$(prompt_jrs_section $rtype $rparts)"
 }
 
 prompt_jrs_hooks_redraw() {

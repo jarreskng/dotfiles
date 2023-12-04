@@ -55,7 +55,12 @@ zstyle ':completion:*:processes'    insert-ids menu select
 #-----------------------------------------------------------------------
 
 autoload -U promptinit; promptinit
-prompt jrs
+
+if [[ ${TERMINAL_EMULATOR} == "JetBrains-JediTerm" ]]; then
+  prompt redhat
+else
+  prompt jrs
+fi
 
 #-----------------------------------------------------------------------
 #                         bindings
