@@ -128,22 +128,28 @@ prompt_jrs_update() {
   RPROMPT="$(prompt_jrs_section $rtype $rparts)"
 }
 
-prompt_jrs_hooks_redraw() {
-  prompt_jrs_vim_keymap "$KEYMAP"
-  if [[ -n $PJRS_VIM_REDRAW ]]; then
-    prompt_jrs_update redraw
-    zle && zle reset-prompt
-  fi
+prompt_jrs_hooks_donothing() {
+
 }
 
 prompt_jrs_hooks_precmd() {
   prompt_jrs_vim_keymap viins
   prompt_jrs_update precmd
+
+  trap "prompt_jrs_hooks_line_finish; return 130" INT
 }
 
-prompt_jrs_hooks_finish() {
+prompt_jrs_hooks_line_finish() {
   RPROMPT=
   zle && zle reset-prompt
+}
+
+prompt_jrs_hooks_line_redraw() {
+  prompt_jrs_vim_keymap "$KEYMAP"
+  if [[ -n $PJRS_VIM_REDRAW ]]; then
+    prompt_jrs_update redraw
+    zle && zle reset-prompt
+  fi
 }
 
 prompt_jrs_setup() {
@@ -156,9 +162,13 @@ prompt_jrs_setup() {
   setopt prompt_cr
   setopt prompt_percent
 
+  # https://github.com/romkatv/powerlevel10k/issues/888
+  # https://vincent.bernat.ch/en/blog/2021-zsh-transient-prompt
+
+  add-zsh-hook precmd prompt_jrs_hooks_donothing
   add-zsh-hook precmd prompt_jrs_hooks_precmd
-  add-zle-hook-widget line-pre-redraw prompt_jrs_hooks_redraw
-  add-zle-hook-widget zle-line-finish prompt_jrs_hooks_finish
+  add-zle-hook-widget line-pre-redraw prompt_jrs_hooks_line_redraw
+  add-zle-hook-widget zle-line-finish prompt_jrs_hooks_line_finish
 }
 
 prompt_jrs_setup "$@"
