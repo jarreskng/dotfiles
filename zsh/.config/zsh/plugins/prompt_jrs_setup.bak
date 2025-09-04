@@ -1,0 +1,402 @@
+# vim:ft=zsh ts=2 sw=2 sts=2
+
+# Custom ZSH Prompt Configuration
+# https://zsh.sourceforge.io/Doc/Release/Prompt-Expansion.html
+
+# Configuration variables
+[[ -z "$PJRS_SECTION_LPARTS" ]] && PJRS_SECTION_LPARTS=(ctx dir)
+[[ -z "$PJRS_SECTION_RPARTS" ]] && PJRS_SECTION_RPARTS=(git vim)
+
+# Colors configuration based on GitHub Light theme palette
+# Using 256-color palette equivalents of GitHub Light theme colors
+
+# Context: danger color for root/ssh (matches GitHub danger.fg: #d1242f)
+[[ -z "$PJRS_COLORS_CTX_BG"  ]] && PJRS_COLORS_CTX_BG=160                   # Red (#d1242f equivalent)
+[[ -z "$PJRS_COLORS_CTX_FG"  ]] && PJRS_COLORS_CTX_FG=255                   # White
+
+# Directory: accent color (matches GitHub accent.fg: blue[6] from scale)
+[[ -z "$PJRS_COLORS_DIR_BG"  ]] && PJRS_COLORS_DIR_BG=33                    # Blue (#2083cd equivalent)
+[[ -z "$PJRS_COLORS_DIR_FG"  ]] && PJRS_COLORS_DIR_FG=255                   # White
+
+# Git: success color for clean (matches GitHub success.emphasis: #1f883d)
+[[ -z "$PJRS_COLORS_GIT_BG"  ]] && PJRS_COLORS_GIT_BG=28                    # Green (#1f883d equivalent)
+[[ -z "$PJRS_COLORS_GIT_FG"  ]] && PJRS_COLORS_GIT_FG=255                   # White
+# Git dirty: attention color (matches GitHub attention.emphasis: yellow[6] from scale)
+[[ -z "$PJRS_COLORS_GIT_DIRTY_BG" ]] && PJRS_COLORS_GIT_DIRTY_BG=172        # Orange/Yellow (#f6a700 equivalent)
+[[ -z "$PJRS_COLORS_GIT_DIRTY_FG" ]] && PJRS_COLORS_GIT_DIRTY_FG=0          # Black (for contrast)
+
+# Vim mode colors - based on common lualine conventions with GitHub Light palette
+# Insert mode - accent blue (primary action color)
+[[ -z "$PJRS_COLORS_VIM_INSERT_BG" ]] && PJRS_COLORS_VIM_INSERT_BG=33       # Blue (#2083cd)
+[[ -z "$PJRS_COLORS_VIM_INSERT_FG" ]] && PJRS_COLORS_VIM_INSERT_FG=255      # White
+
+# Normal mode - neutral/subtle (matches GitHub neutral.emphasis)
+[[ -z "$PJRS_COLORS_VIM_NORMAL_BG" ]] && PJRS_COLORS_VIM_NORMAL_BG=245      # Gray (#636e7b equivalent)
+[[ -z "$PJRS_COLORS_VIM_NORMAL_FG" ]] && PJRS_COLORS_VIM_NORMAL_FG=255      # White
+
+# Visual mode - purple (matches GitHub purple[6] from scale)
+[[ -z "$PJRS_COLORS_VIM_VISUAL_BG" ]] && PJRS_COLORS_VIM_VISUAL_BG=98       # Purple (#9f72dd equivalent)
+[[ -z "$PJRS_COLORS_VIM_VISUAL_FG" ]] && PJRS_COLORS_VIM_VISUAL_FG=255      # White
+
+# Visual line mode - slightly different purple shade
+[[ -z "$PJRS_COLORS_VIM_VLINE_BG"  ]] && PJRS_COLORS_VIM_VLINE_BG=97        # Darker purple
+[[ -z "$PJRS_COLORS_VIM_VLINE_FG"  ]] && PJRS_COLORS_VIM_VLINE_FG=255       # White
+
+# Separator symbols
+[[ -z "$PJRS_SYMBOL_LSEP"    ]] && PJRS_SYMBOL_LSEP=$'\ue0b0'
+[[ -z "$PJRS_SYMBOL_RSEP"    ]] && PJRS_SYMBOL_RSEP=$'\ue0b2'
+
+# Directory truncation settings
+[[ -z "$PJRS_DIR_MAX_LENGTH" ]] && PJRS_DIR_MAX_LENGTH=30
+[[ -z "$PJRS_DIR_MAX_DEPTH"  ]] && PJRS_DIR_MAX_DEPTH=2
+
+# Global variables for segment management
+typeset -ga PJRS_LEFT_SEGMENTS
+typeset -ga PJRS_RIGHT_SEGMENTS
+PJRS_LEFT_SEGMENTS=()
+PJRS_RIGHT_SEGMENTS=()
+
+# Initialize vim keymap state
+PJRS_VIM_KEYMAP=viins
+PJRS_VIM_REDRAW=
+
+# Vim mode handling
+prompt_jrs_vim_keymap() {
+  local keymap="$1"
+  local region=${REGION_ACTIVE:-0}
+
+  if [[ $keymap = main || $keymap = '' ]]; then
+    keymap=viins
+  fi
+
+  if [[ $keymap = vicmd && $region = 1 ]]; then
+    keymap=vichar
+  fi
+
+  if [[ $keymap = vicmd && $region = 2 ]]; then
+    keymap=viline
+  fi
+
+  if [[ $keymap = $PJRS_VIM_KEYMAP ]]; then
+    PJRS_VIM_REDRAW=
+  else
+    PJRS_VIM_REDRAW=1
+    PJRS_VIM_KEYMAP=$keymap
+  fi
+}
+
+# Context segment (root or SSH)
+prompt_jrs_segments_ctx() {
+  local content=
+  local show_context=0
+
+  # Check if root
+  if [[ $UID -eq 0 ]]; then
+    content="root"
+    show_context=1
+  # Check if SSH session
+  elif [[ -n "$SSH_CLIENT" || -n "$SSH_TTY" ]]; then
+    content="%n@%m"
+    show_context=1
+  fi
+
+  if [[ $show_context -eq 1 ]]; then
+    prompt_jrs_add_segment "$1" "$content" "$PJRS_COLORS_CTX_BG" "$PJRS_COLORS_CTX_FG"
+  fi
+}
+
+# Directory segment with smart truncation
+prompt_jrs_segments_dir() {
+  local dir_path="${PWD/#$HOME/~}"
+  local truncated_path=""
+  
+  # Split path into array
+  local -a path_parts
+  path_parts=("${(@s:/:)dir_path}")
+  
+  # Remove empty first element if path starts with /
+  if [[ -z "${path_parts[1]}" ]]; then
+    path_parts=("${path_parts[@]:1}")
+  fi
+  
+  local num_parts=${#path_parts[@]}
+  
+  if [[ $num_parts -le $PJRS_DIR_MAX_DEPTH ]]; then
+    truncated_path="$dir_path"
+  else
+    # Keep last N directories
+    local start_idx=$((num_parts - PJRS_DIR_MAX_DEPTH + 1))
+    truncated_path="…/${(j:/:)path_parts[@]:$start_idx}"
+  fi
+  
+  # Further truncate if still too long
+  if [[ ${#truncated_path} -gt $PJRS_DIR_MAX_LENGTH ]]; then
+    # Try to shorten individual components
+    local -a short_parts
+    short_parts=("${(@s:/:)truncated_path}")
+    local result=""
+    
+    for i in {1..$#short_parts}; do
+      if [[ $i -eq $#short_parts ]]; then
+        # Keep last component full if possible
+        if [[ ${#short_parts[$i]} -gt 15 ]]; then
+          short_parts[$i]="${short_parts[$i]:0:12}…"
+        fi
+      else
+        # Truncate intermediate components
+        if [[ ${#short_parts[$i]} -gt 5 ]]; then
+          short_parts[$i]="${short_parts[$i]:0:3}…"
+        fi
+      fi
+    done
+    
+    truncated_path="${(j:/:)short_parts}"
+  fi
+  
+  prompt_jrs_add_segment "$1" "$truncated_path" "$PJRS_COLORS_DIR_BG" "$PJRS_COLORS_DIR_FG"
+}
+
+# Git segment
+prompt_jrs_segments_git() {
+  # Check if in git repo
+  local git_folder="$(command git rev-parse --git-dir 2>/dev/null)"
+  [[ -z $git_folder ]] && return
+
+  local git_branch="$(command git symbolic-ref --short HEAD 2>/dev/null)"
+  local git_commit="$(command git rev-parse --short HEAD 2>/dev/null)"
+  local git_head=${git_branch:-$git_commit}
+  
+  # Get git status
+  local git_status="$(command git status --porcelain 2>/dev/null)"
+  local git_symbols=""
+  local is_dirty=0
+  
+  # Check for various states
+  local untracked=$(echo "$git_status" | grep -c '^??')
+  local modified=$(echo "$git_status" | grep -c '^ M')
+  local staged=$(echo "$git_status" | grep -c '^[AM]')
+  local ahead_behind=$(command git rev-list --count --left-right @{upstream}...HEAD 2>/dev/null)
+  
+  # Build status symbols
+  if [[ $staged -gt 0 ]]; then
+    git_symbols+="+"
+    is_dirty=1
+  fi
+  if [[ $modified -gt 0 ]]; then
+    git_symbols+="!"
+    is_dirty=1
+  fi
+  if [[ $untracked -gt 0 ]]; then
+    git_symbols+="?"
+    is_dirty=1
+  fi
+  
+  # Check ahead/behind
+  if [[ -n $ahead_behind ]]; then
+    local behind=$(echo $ahead_behind | cut -f1)
+    local ahead=$(echo $ahead_behind | cut -f2)
+    [[ $ahead -gt 0 ]] && git_symbols+="⇡"
+    [[ $behind -gt 0 ]] && git_symbols+="⇣"
+  fi
+  
+  local content="$git_head"
+  [[ -n $git_symbols ]] && content+=" $git_symbols"
+  
+  # Use different colors based on git status
+  local bg_color=$PJRS_COLORS_GIT_BG
+  local fg_color=$PJRS_COLORS_GIT_FG
+  if [[ $is_dirty -eq 1 ]]; then
+    bg_color=$PJRS_COLORS_GIT_DIRTY_BG
+    fg_color=$PJRS_COLORS_GIT_DIRTY_FG
+  fi
+  
+  prompt_jrs_add_segment "$1" "$content" "$bg_color" "$fg_color"
+}
+
+# Vim mode segment
+prompt_jrs_segments_vim() {
+  local content=
+  local bg_color=
+  local fg_color=
+  
+  case ${PJRS_VIM_KEYMAP:-viins} in
+    viins)
+      content="I"
+      bg_color=$PJRS_COLORS_VIM_INSERT_BG
+      fg_color=$PJRS_COLORS_VIM_INSERT_FG
+      ;;
+    vicmd)
+      content="N"
+      bg_color=$PJRS_COLORS_VIM_NORMAL_BG
+      fg_color=$PJRS_COLORS_VIM_NORMAL_FG
+      ;;
+    viline)
+      content="VL"
+      bg_color=$PJRS_COLORS_VIM_VLINE_BG
+      fg_color=$PJRS_COLORS_VIM_VLINE_FG
+      ;;
+    vichar)
+      content="V"
+      bg_color=$PJRS_COLORS_VIM_VISUAL_BG
+      fg_color=$PJRS_COLORS_VIM_VISUAL_FG
+      ;;
+  esac
+  
+  [[ -n $content ]] && prompt_jrs_add_segment "$1" "$content" "$bg_color" "$fg_color"
+}
+
+# Add segment to the appropriate array
+prompt_jrs_add_segment() {
+  local side=$1
+  local content=$2
+  local bg=$3
+  local fg=$4
+  
+  if [[ $side = "L" ]]; then
+    PJRS_LEFT_SEGMENTS+=("$bg:$fg:$content")
+  else
+    PJRS_RIGHT_SEGMENTS+=("$bg:$fg:$content")
+  fi
+}
+
+# Build left prompt with separators
+prompt_jrs_build_left() {
+  local output=""
+  local prev_bg=""
+  
+  for i in {1..$#PJRS_LEFT_SEGMENTS}; do
+    local segment="${PJRS_LEFT_SEGMENTS[$i]}"
+    local bg="${segment%%:*}"
+    local rest="${segment#*:}"
+    local fg="${rest%%:*}"
+    local content="${rest#*:}"
+    
+    # Add separator if not first segment
+    if [[ $i -gt 1 ]]; then
+      output+="%F{$prev_bg}%K{$bg}${PJRS_SYMBOL_LSEP}%f"
+    fi
+    
+    # Add segment content
+    output+="%K{$bg}%F{$fg} $content %f%k"
+    prev_bg=$bg
+  done
+  
+  # Add final separator if there were segments
+  if [[ ${#PJRS_LEFT_SEGMENTS} -gt 0 ]]; then
+    output+="%F{$prev_bg}${PJRS_SYMBOL_LSEP}%f"
+  fi
+  
+  echo -n "$output"
+}
+
+# Build right prompt with separators
+prompt_jrs_build_right() {
+  local output=""
+  local prev_bg=""
+  
+  for i in {1..$#PJRS_RIGHT_SEGMENTS}; do
+    local segment="${PJRS_RIGHT_SEGMENTS[$i]}"
+    local bg="${segment%%:*}"
+    local rest="${segment#*:}"
+    local fg="${rest%%:*}"
+    local content="${rest#*:}"
+    
+    # Add separator
+    if [[ $i -eq 1 ]]; then
+      # Starting separator
+      output+="%F{$bg}${PJRS_SYMBOL_RSEP}%f"
+    else
+      # Between segments
+      output+="%F{$bg}%K{$prev_bg}${PJRS_SYMBOL_RSEP}%f"
+    fi
+    
+    # Add segment content
+    output+="%K{$bg}%F{$fg} $content %f%k"
+    prev_bg=$bg
+  done
+  
+  echo -n "$output"
+}
+
+# Process sections and build prompts
+prompt_jrs_section() {
+  local segment_prefix="prompt_jrs_segments"
+  local segment_function
+  
+  local section_type="$1"; shift
+  local section_parts=("$@")
+  
+  # Clear segments arrays
+  if [[ $section_type = "L" ]]; then
+    PJRS_LEFT_SEGMENTS=()
+  else
+    PJRS_RIGHT_SEGMENTS=()
+  fi
+  
+  # Collect segments
+  for segment_name in "$section_parts[@]"; do
+    segment_function="${segment_prefix}_${segment_name}"
+    if typeset -f $segment_function > /dev/null; then
+      $segment_function $section_type
+    fi
+  done
+  
+  # Build and return the prompt
+  if [[ $section_type = "L" ]]; then
+    prompt_jrs_build_left
+  else
+    prompt_jrs_build_right
+  fi
+}
+
+# Update prompts
+prompt_jrs_update() {
+  local lparts=($PJRS_SECTION_LPARTS)
+  local rparts=($PJRS_SECTION_RPARTS)
+  
+  PROMPT="$(prompt_jrs_section L $lparts) "
+  RPROMPT="$(prompt_jrs_section R $rparts)"
+}
+
+# Hook functions
+prompt_jrs_hooks_precmd() {
+  prompt_jrs_vim_keymap viins
+  prompt_jrs_update
+  
+  trap "prompt_jrs_hooks_line_finish; return 130" INT
+}
+
+prompt_jrs_hooks_line_finish() {
+  # Transient prompt - clear right prompt
+  RPROMPT=
+  zle && zle reset-prompt
+}
+
+prompt_jrs_hooks_line_redraw() {
+  prompt_jrs_vim_keymap "$KEYMAP"
+  if [[ -n $PJRS_VIM_REDRAW ]]; then
+    prompt_jrs_update
+    zle && zle reset-prompt
+  fi
+}
+
+# Main setup function
+prompt_jrs_setup() {
+  autoload -Uz colors && colors
+  autoload -Uz vcs_info
+  autoload -Uz add-zsh-hook
+  autoload -Uz add-zle-hook-widget
+  
+  setopt prompt_subst
+  setopt prompt_cr
+  setopt prompt_percent
+  
+  # Add hooks for prompt updates
+  add-zsh-hook precmd prompt_jrs_hooks_precmd
+  add-zle-hook-widget line-pre-redraw prompt_jrs_hooks_line_redraw
+  add-zle-hook-widget zle-line-finish prompt_jrs_hooks_line_finish
+}
+
+# Initialize the prompt
+prompt_jrs_setup "$@"
+

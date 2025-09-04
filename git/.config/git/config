@@ -1,0 +1,27 @@
+[user]
+    name = jarreskng
+    email = jarreskng@gmail.com
+
+[status]
+    branch = true
+    short = false
+    showStash = false
+
+[log]
+    date = relative
+
+[url "ssh://git@github.com/"]
+    insteadOf = git://github.com/
+    insteadOf = http://github.com/
+    insteadOf = https://github.com/
+
+[url "ssh://git@gitlab.com/"]
+    insteadOf = git://gitlab.com/
+    insteadOf = http://gitlab.com/
+    insteadOf = https://gitlab.com/
+
+[core]
+	autocrlf = input
+
+[init]
+	defaultBranch = master

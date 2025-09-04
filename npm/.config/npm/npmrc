@@ -1,0 +1,2 @@
+cache=${XDG_DATA_HOME}/npm
+prefix=${XDG_DATA_HOME}/npm
