@@ -25,8 +25,7 @@ set ignorecase
 set notimeout
 set history = 200
 set undolevels = 200
-set clipboard+=ideaput
-set clipboard+=unnamedplus
+set clipboard = unnamed,unnamedplus,ideaput
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """ Idea settings
@@ -36,6 +35,14 @@ set ideamarks
 set ideawrite=all
 set ideastatusicon=gray
 set idearefactormode=select
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""" Copy/Paste
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+vnoremap y <Action>(EditorCopy)
+nnoremap p <Action>(EditorPaste)
+vnoremap p <Action>(EditorPaste)
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """ Which Key
